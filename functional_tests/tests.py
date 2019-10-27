@@ -43,7 +43,7 @@ class NewVisitorTest(LiveServerTestCase):
         
         self.wait_for_row_in_list_table('2: Use peacock feathers to make a fly')
         self.wait_for_row_in_list_table('1: Buy peacock feathers')
-#        self.fail('Finish it')
+        #self.fail('Finish it')
         
     def test_multiple_users_can_start_lists_at_diff_urls(self):
         self.browser.get(self.live_server_url)
@@ -54,7 +54,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.wait_for_row_in_list_table('1: Buy peacock feathers')
         
         edith_list_url=self.browser.current_url
-        self.assertRegex(edith_list_url,'/lists/.+')
+        self.assertRegex(edith_list_url,'/lists/.+')#error here
         #we use regular expression to assert current url has the form /lists/
         #and cookie is for identifying diff clients in HTTP request
         self.browser.quit()
