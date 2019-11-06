@@ -1,5 +1,6 @@
 from django.test import TestCase
-from lists.models import Item
+#from lists.models import Item
+from lists.models import Item, List
 
 #from django.urls import resolve
 #from django.http import HttpRequest
@@ -17,26 +18,55 @@ class HomePageTest(TestCase):
         response=self.client.get('/')
         self.assertTemplateUsed(response,'home.html')
         
-class ItemModelTest(TestCase):
+#class ItemModelTest(TestCase):
+#    
+#    def test_saving_and_retrieving_items(self):
+#        first_item=Item()
+#        first_item.text='The first (ever) list item'
+#        first_item.save()
+#        #we have an item and save it
+#        
+#        second_item=Item()
+#        second_item.text='Item the second'
+#        second_item.save()
+#        #we have a second item and save it too
+#        
+#        saved_items=Item.objects.all()
+#        #we retrieve all the saved items
+#        self.assertEqual(saved_items.count(),2)
+#        first_saved_item=saved_items[0]
+#        second_saved_item=saved_items[1]
+#        self.assertEqual(first_saved_item.text,'The first (ever) list item')
+#        self.assertEqual(second_saved_item.text,'Item the second')
+class ListAndItemModelsTest(TestCase):
     
-    def test_saving_and_retrieving_items(self):
-        first_item=Item()
-        first_item.text='The first (ever) list item'
-        first_item.save()
-        #we have an item and save it
+    def test_saving_and_retrieving_items(self):   #we need to save Item for diff users
+        list_=List() # use List object
+        list_.save() # save the list?
         
+        first_item=Item() #create Item
+        first_item.text='The first list item'
+        first_item.list=list_ #Item obj has a prop list_
+        first_item.save() # save the item with a list
+
         second_item=Item()
         second_item.text='Item the second'
+        second_item.list=list_ #save the item witha list
         second_item.save()
-        #we have a second item and save it too
         
-        saved_items=Item.objects.all()
-        #we retrieve all the saved items
-        self.assertEqual(saved_items.count(),2)
-        first_saved_item=saved_items[0]
-        second_saved_item=saved_items[1]
-        self.assertEqual(first_saved_item.text,'The first (ever) list item')
+        saved_list=List.objects.first() #fetch the first List?
+        self.assertEqual(saved_list,list_) #the first list is list_
+        
+        saved_items=Item.objects.all() #fetch all item saved
+        self.assertEqual(saved_items.count(),2) #saved 2 items
+        
+        first_saved_item=saved_items[0] # the first saved item
+        second_saved_item=saved_items[1] # the second saved item
+        self.assertEqual(first_saved_item.text,'The first list item')
+        self.assertEqual(first_saved_item.list,list_)
         self.assertEqual(second_saved_item.text,'Item the second')
+        self.assertEqual(second_saved_item.list,list_)
+        
         
 class ListViewTest(TestCase):
     
@@ -44,16 +74,23 @@ class ListViewTest(TestCase):
         response=self.client.get('/lists/the-only-list-in-the-world/')
         self.assertTemplateUsed(response,'list.html')
         
-    
-    def test_displays_all_list_items(self):
-        Item.objects.create(text='itemey 1')
-        Item.objects.create(text='itemey 2')
-        #we store the info in the server db
-        #and we could find these info in url /lists/the-only-list-in-the-world
+#    
+#    def test_displays_all_list_items(self):
+#        Item.objects.create(text='itemey 1')
+#        Item.objects.create(text='itemey 2')
+#        #we store the info in the server db
+#        #and we could find these info in url /lists/the-only-list-in-the-world
+#        
+#        response=self.client.get('/lists/the-only-list-in-the-world/')
+#        self.assertContains(response,'itemey 1')
+#        self.assertContains(response,'itemey 2')
         
-        response=self.client.get('/lists/the-only-list-in-the-world/')
-        self.assertContains(response,'itemey 1')
-        self.assertContains(response,'itemey 2')
+    def test_displays_all_items(self):
+        list_=List.objects.create()
+        Item.objects.create(text='itemey 1',list=list_)
+        Item.objects.create(text='itemey 2',list=list_)
+        
+        
         
 class NewListTest(TestCase):
     
