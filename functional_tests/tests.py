@@ -54,7 +54,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.wait_for_row_in_list_table('1: Buy peacock feathers')
         
         edith_list_url=self.browser.current_url
-        self.assertRegex(edith_list_url,'/lists/.+')#error here
+        self.assertRegex(edith_list_url,'/lists/.+')
         #we use regular expression to assert current url has the form /lists/
         #and cookie is for identifying diff clients in HTTP request
         self.browser.quit()
@@ -77,7 +77,7 @@ class NewVisitorTest(LiveServerTestCase):
         
         page_text=self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Buy peacock feathers',page_text)
-        self.assertNotIn('Buy milk',page_text)
+        self.assertIn('Buy milk',page_text)
         
         
     def wait_for_row_in_list_table(self,row_text):
@@ -92,6 +92,37 @@ class NewVisitorTest(LiveServerTestCase):
                 if time.time() - start_time > MAX_WAIT:
                     raise e
                 time.sleep(0.5)
+                
+                
+    def test_layout_and_styling(self):
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1024,768)
+        
+        inputbox=self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('testing')
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: testing')
+        inputbox=self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+                inputbox.location['x']+inputbox.size['width']/2,
+                512,
+                delta=10)
+
 #if __name__=='__main__':
 #    unittest.main(warnings='ignore')
 
+
+    
+
+
+
+
+
+
+        
+        
+        
+        
+        
+        
+        
