@@ -18,7 +18,6 @@ from django.conf.urls import url
 from lists import views
 
 urlpatterns = [
-    url(r'^$', views.home_page, name='home'),
     #here url is what we need in views.py
     url(r'^new$',views.new_list,name='new_list'),
     url(r'^(\d+)/$',views.view_list,name='view_list'),
